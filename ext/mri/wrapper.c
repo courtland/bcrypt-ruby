@@ -185,12 +185,21 @@ char *crypt_ra(__CONST char *key, __CONST char *setting,
 	return _crypt_blowfish_rn(key, setting, (char *)*data, *size);
 }
 
+#if __FreeBSD_version <= 1200000
 char *crypt_r(__CONST char *key, __CONST char *setting, struct crypt_data *data)
 {
 	return _crypt_retval_magic(
 		crypt_rn(key, setting, data, CRYPT_OUTPUT_SIZE),
 		setting, (char *)data);
 }
+#else
+char *crypt_r(__CONST char *key, __CONST char *setting, void *data)
+{
+	return _crypt_retval_magic(
+		crypt_rn(key, setting, data, CRYPT_OUTPUT_SIZE),
+		setting, (char *)data);
+}
+#endif
 
 #define __crypt_gensalt_rn crypt_gensalt_rn
 #define __crypt_gensalt_ra crypt_gensalt_ra
